@@ -20,17 +20,17 @@ hash = hash1.findall(str(form))[0]
 print(entoken, hash)
 conn = sqlite3.connect('gaokao.db')
 c = conn.cursor()
-html = requests.get(url, headers=headers, data={'lnlqnf': '2021', 'lnlqsheng': 'bj', 'entoken': entoken, 'hash': hash})
-print(html.text)
+
+
 def query(province, year):
     print(province, year)
     payload = {
-        'lnlqnf': '2011',
-        'lnlqsheng': 'bj',
+        'lnlqnf': year,
+        'lnlqsheng': province,
         'entoken': entoken,
         'hash': hash
     }
-    html = requests.get(url, data=payload)
+    html = requests.post(url, data=payload)
     html.encoding = html.apparent_encoding
     bs = BeautifulSoup(html.text, 'html.parser')
     data = bs.find_all('td')
@@ -38,33 +38,38 @@ def query(province, year):
     for item in data:
         if item.text is None:
             continue
-        t = 7
-        if len(l) > 1 and (l[1].isdigit() or len(l[1]) == 0):
-            t = 6
+        t = 6 if (len(l) > 1 and (l[1].isdigit() or len(l[1]) == 0)) else 7
         l.append(item.text)
         if len(l) == t:
-            # print(l)
+            l = [0 if x == '——' else int(x) if x.isdigit() else x for x in l]
+            print(l)
+            if t == 6:
+                c.execute('insert into gk1 values(?,?,?,?,?,?)',
+                          [int(year), province, l[0], l[3], l[4], l[5]])
+                conn.commit()
+            else:
+                c.execute('insert into gaokao values(?,?,?,?,?,?,?,?)',
+                          [int(year), province, l[1], l[2], l[4], l[5], l[3], l[6]])
+                conn.commit()
             l = []
-        # if t==6:
-
 
 
 # # query('吉林', '2022')
-html = requests.get('http://zsb.jlu.edu.cn/index/admission.html')
+html = requests.get(url, headers=headers)
 html.encoding = html.apparent_encoding
 bs = BeautifulSoup(html.text, 'html.parser')
 data = bs.find_all('option')
 years = []
 provinces = []
 for item in data:
-    if(item['value'].isdigit()):
+    if item['value'].isdigit():
         years.append(item['value'])
     else:
         provinces.append(item['value'])
 
-print(years, provinces)
 
+# query('xz', '2022')
 
-# for year in years:
-#     for province in provinces:
-#         query(province, year)
+for year in years:
+    for province in provinces:
+        query(province, year)
