@@ -40,7 +40,7 @@ order by count(*) desc
 specializeds = [l[0] for l in specializeds]
 print(specializeds)
 q_year = 2022
-l1 = [0, 2]
+l1 = [0, 2, 5]
 q_specialized = tuple([specializeds[i] for i in l1])
 sql_text = '''
 select prov.province,gk1.score,gk1.specialized

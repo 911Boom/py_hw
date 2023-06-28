@@ -15,6 +15,9 @@ pip install pandas
 pip install weibo-spider
 pip install selenium 
 pip install pyecharts
+pip install sklearn
+pip install xgboost
+pip install scikit-learn
 ```
 
 
