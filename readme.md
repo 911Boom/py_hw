@@ -13,13 +13,8 @@ pip install bs4
 pip install jupyter
 pip install pandas
 pip install weibo-spider
-pip install selenium
+pip install selenium 
+pip install pyecharts
 ```
 
-## Hw_gaokao 用到的库
-request
-
-bs4
-
-pandas
 
