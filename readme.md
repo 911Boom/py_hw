@@ -18,6 +18,8 @@ pip install pyecharts
 pip install sklearn
 pip install xgboost
 pip install scikit-learn
+pip install requests_html
+
 ```
 
 
