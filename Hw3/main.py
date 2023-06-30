@@ -7,6 +7,7 @@ from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 import sqlite3
 import time
+import requests
 
 conn = sqlite3.connect('ssq.db')
 headers = {
@@ -66,11 +67,41 @@ def query(url, x):
     conn.commit()
 
 
+df = pd.DataFrame(
+    columns=['id', 'red1', 'red2', 'red3', 'red4', 'red5', 'red6', 'blue', 'firstPrizeAddress', 'OpenTime',
+             'SaleMoney'])
+
+
+def query3(url, x):
+    headers = {
+        'Referer': 'https://www.zhcw.com/',
+    }
+    params = {
+        'transactionType': '10001002',
+        'lotteryId': '1',
+        'issue': x,
+        'tt': '0.4434763962897714',
+        '_': '1688016745476',
+    }
+    response = requests.get('https://jc.zhcw.com/port/client_json.php', params=params, headers=headers)
+    # print(response.json())
+    ele = [response.json()['issue']]
+    ele = ele + response.json()['seqFrontWinningNum'].split(' ')
+    ele.append(response.json()['seqBackWinningNum'])
+    ele.append(response.json()['firstPrizeAddress'])
+    ele.append(response.json()['openTime'])
+    ele.append(response.json()['saleMoney'])
+    print(ele)
+    global df
+    df = df.append(pd.DataFrame([ele], columns=['id', 'red1', 'red2', 'red3', 'red4', 'red5', 'red6', 'blue',
+                                                'firstPrizeAddress', 'OpenTime', 'SaleMoney']), ignore_index=True)
+
+
 start = time.perf_counter()
 url = 'https://www.zhcw.com/kjxx/ssq/kjxq/?kjData={}'
-for year in range(2017, 2024):
+for year in range(2016, 2024):
     for x in range(dict[str(year)][0], dict[str(year)][1] + 1):
-        if len(cur.execute('select * from ssq where id=?', (x,)).fetchall()) != 0:
-            continue
-        print(time.perf_counter() - start)
-        query(url.format(x), x)
+        # print(time.perf_counter() - start)
+        query3(url.format(x), x)
+# query3(url, 2021001)
+df.to_csv('ssq.csv', index=False)
