@@ -35,7 +35,8 @@ def query1(url, x):
     ele.append(driver.find_element(By.CLASS_NAME, 'kjqL').text)
     eles = driver.find_elements(By.TAG_NAME, 'dd')
     ele.append(eles[-2].text)
-    ele.append(driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/span').text)
+    ele.append(driver.find_element(
+        By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/span').text)
     ele = ele[6:]
     ele = [x] + ele
     ele[-1] = ele[-1][5:].replace('年', '-').replace('月', '-').replace('日', '')
@@ -83,7 +84,8 @@ def query3(url, x):
         'tt': '0.4434763962897714',
         '_': '1688016745476',
     }
-    response = requests.get('https://jc.zhcw.com/port/client_json.php', params=params, headers=headers)
+    response = requests.get(
+        'https://jc.zhcw.com/port/client_json.php', params=params, headers=headers)
     # print(response.json())
     ele = [response.json()['issue']]
     ele = ele + response.json()['seqFrontWinningNum'].split(' ')

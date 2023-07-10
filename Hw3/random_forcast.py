@@ -1,6 +1,7 @@
 import random
 import pandas
 
+
 def get_score(y_pred, y_test):
     red_test = y_test[:6]
     blue_test = y_test[6]
@@ -17,9 +18,9 @@ def get_score(y_pred, y_test):
     if blue_pred == blue_test:
         blue = 1
     if red == 6 and blue == 1:
-        return 7500000
+        return 4000000
     elif red == 6:
-        return 400000
+        return 80000
     elif red == 5 and blue == 1:
         return 3000
     elif red == 5 or (red == 4 and blue == 1):
@@ -31,28 +32,29 @@ def get_score(y_pred, y_test):
     else:
         return -2
 
-data = pandas.read_csv('ssq.csv')
-y_column = ['red1','red2','red3','red4','red5','red6','blue']
+
+data = pandas.read_csv('./Hw3/ssq.csv')
+y_column = ['red1', 'red2', 'red3', 'red4', 'red5', 'red6', 'blue']
 test = data[y_column]
+
 
 def game():
     tot = 0
     for i in range(1000):
-        y_pred = [random.randint(1, 33) for j in range(6)]
+        y_pred = random.sample(range(1, 34), 6)
         y_pred.append(random.randint(1, 16))
         y_test = list(test.iloc[i])
         score = get_score(y_pred, y_test)
         if score > 200:
+            print(y_pred, y_test)
             print(score)
         tot += score
     print(tot)
     return tot
 
+
 t = 0
 for i in range(100):
     t += game()
 
-print(t)
-
-
-
+print(t/100)
